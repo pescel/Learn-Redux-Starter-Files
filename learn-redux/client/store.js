@@ -14,8 +14,19 @@ const defaultState = {
   comments
 };
 
+const enhancers = compose(
+  window.devToolsExtention ? window.devToolsExtention() : f => f
+);
+
 const store = createStore(rootReducer, defaultState);
 
 export const history = syncHistoryWithStore(browserHistory, store);
+
+if(module.hot) {
+  module.hot.accept('./reducers/', () => {
+    const nextRootReducer = require('./reducers/index').default;
+    store.replaceReducer(nextRootReducer)
+  })
+}
 
 export default store;
